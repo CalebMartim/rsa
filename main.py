@@ -2,7 +2,7 @@ from random import randint
 from crivo import primos
 from OAEP import oaep_encode, oaep_decode
 import rsa
-import base64
+from base64 import b64encode, b64decode 
 
 def aleatorio_1024bits():
   s = ""
@@ -73,14 +73,17 @@ def main():
   with open("mensagem.txt", "r") as file:
      M = file.read()
     
+  # Mensagem cifrada codificada em UTF-8:
   C = rsa.encriptar(M, chave_publica)
 
-  x = base64.b64encode(C).decode('utf-8')
-  print(f'Mensagem encriptada:\n{x}\n')
+  # Mensagem cifrada codificada em base64:
+  x = b64encode(C)
+  print(f'Mensagem encriptada:\n{x.decode('utf-8')}\n')
 
-  y = base64.b64decode(x.encode('utf-8'))
+  # Mensagem cifrada decodificada da base64:
+  y = b64decode(x)
   mensagem_recuperada = rsa.decriptar(y, chave_privada)
-  print(f'Mensagem recuperada:\n{mensagem_recuperada}', end="")
+  print(f'Mensagem recuperada:\n{mensagem_recuperada.decode('utf-8')}', end="")
     
 if __name__ == "__main__":
   main()

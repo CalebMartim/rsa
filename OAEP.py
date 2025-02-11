@@ -1,5 +1,6 @@
 import hashlib
 import secrets
+from math import ceil
 
 def mascara(semente, tamanho_mascara):
     
@@ -24,6 +25,7 @@ def mascara(semente, tamanho_mascara):
     return mask[:tamanho_mascara]
 
 def oaep_encode(message, n_bit_len, label=b''):
+    
     # Função de hash (SHA3-256):
     funcao_hash = hashlib.sha3_256
 
