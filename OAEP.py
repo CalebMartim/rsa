@@ -25,24 +25,24 @@ def mascara(semente, tamanho_mascara):
     return mask[:tamanho_mascara]
 
 def oaep_encode(message, n_bit_len, label=b''):
-    
+
     # Função de hash (SHA3-256):
     funcao_hash = hashlib.sha3_256
 
     tamanho_hash = 32 
     
-    # Calculate message and semente lengths
-    k = (n_bit_len + 7) // 8  # Byte length of the modulus
-    msg_max_len = k - 2 * tamanho_hash - 2
+    # Calcula o tamanho da mensagem e da semente
+    k = ceil(n_bit_len / 8) 
+    msg_tam_max = k - (2 * tamanho_hash) - 2
     
-    if len(message) > msg_max_len:
-      raise ValueError(f"Mensagem grande demais. Máximo de {msg_max_len} bytes")
+    if len(message) > msg_tam_max:
+      raise ValueError(f"Mensagem grande demais. Máximo de {msg_tam_max} bytes")
     
     # Hash da label:
     lhash = funcao_hash(label).digest()
     
     # Fazemos o padding na mensagem:
-    ps = b'\x00' * (msg_max_len - len(message))
+    ps = b'\x00' * (msg_tam_max - len(message))
     db = lhash + ps + b'\x01' + message
     
     # Geramos uma semente aleatória:
@@ -67,13 +67,13 @@ def oaep_decode(mensagem_codificada, n_bit_len, label=b''):
     tamanho_hash = 32  
     
     # Calculamos os tamanhos
-    k = (n_bit_len + 7) // 8  # Número de bytes do módulo
+    k = ceil(n_bit_len / 8) # Número de bytes do módulo
     
     # Valida o tamanho da mensagem codificada
     if len(mensagem_codificada) != k:
         raise ValueError("Tamanho de mensagem codificada inválida")
     
-    # Separando os
+    # Separando as partes da mensagem 
     semente_mascarada = mensagem_codificada[1:tamanho_hash+1]
     db_mascarada = mensagem_codificada[tamanho_hash+1:]
     

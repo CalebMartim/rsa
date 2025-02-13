@@ -55,6 +55,12 @@ def main():
   
   n = p * q;
 
+  print(f'Primo P:\n{p}')
+  print('=-=-=')
+  print(f'Primo Q:\n{q}')
+  print('=-=-=')
+  print(f'Módulo (N):\n{n}')
+  print('=-=-=')
   # Função totiente de Euler 
   phi = (p - 1) * (q - 1)
   
@@ -68,6 +74,19 @@ def main():
   chave_publica = (e, n)
   chave_privada = (d, n)
 
+  print(f'Chave pública:\n{e}')
+  print('=-=-=')
+  print(f'Chave privada:\n{d}')
+  print('=-=-=')
+
+
+  print(f'Validação do esquema de chaves:')
+  if d * e % phi == 1:
+    print("Ok!")
+  else:
+    raise Exception("d não é inverso multiplicativo de e.")
+  print('=-=-=')
+
   # Leitura da mensagem em claro:
   M = ""
   with open("mensagem.txt", "r") as file:
@@ -76,14 +95,20 @@ def main():
   # Mensagem cifrada codificada em UTF-8:
   C = rsa.encriptar(M, chave_publica)
 
-  # Mensagem cifrada codificada em base64:
-  x = b64encode(C)
-  print(f'Mensagem encriptada:\n{x.decode('utf-8')}\n')
+  # Assinatura codificada em base64:
+  A = b64encode(C)
+  print(f'Assinatura da mensagem (Base64):\n{A.decode('utf-8')}')
+  print('=-=-=')
 
   # Mensagem cifrada decodificada da base64:
-  y = b64decode(x)
+  y = b64decode(A)
+  
   mensagem_recuperada = rsa.decriptar(y, chave_privada)
-  print(f'Mensagem recuperada:\n{mensagem_recuperada.decode('utf-8')}', end="")
+
+  if mensagem_recuperada.decode('utf-8') == M:
+    print("Assinatura validada com sucesso!")
+  else:
+     raise Exception("Erro! Assinatura não condizente!")
     
 if __name__ == "__main__":
   main()
